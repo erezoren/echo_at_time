@@ -25,7 +25,7 @@ public class Scheduler {
    */
   @PostConstruct
   private void printAllStuckMessages() {
-    System.out.println("Printing messages left in DB");
+   // System.out.println("Printing messages left in DB");
     List<TimedMessage> allWaitingMessages = redisAccessor.getAllStuckMessages();
     allWaitingMessages.stream().forEach(m -> {
       System.out.println(String.format("Message: %s  Displayed on %s", m.getMessage(), formatData(m)));
@@ -38,7 +38,8 @@ public class Scheduler {
    */
   @Scheduled(fixedDelay = 1)
   public void tryConsume() {
-    //redisAccessor.getAllStuckMessages();
+    //TEMP
+    printAllStuckMessages();
   }
 
   private String formatData(TimedMessage timedMessage) {

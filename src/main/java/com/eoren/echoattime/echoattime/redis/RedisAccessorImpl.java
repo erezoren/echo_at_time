@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Component;
@@ -39,14 +38,17 @@ public class RedisAccessorImpl implements RedisAccessor {
     return sortAndFilterByInsertionDateAndDelayTime(all);
   }
 
+  /*
+  Iterable has a size even when it is empty
+   */
   private boolean isEmpty(Iterable<TimedMessage> all) {
-    return all.spliterator().trySplit() == null;
+    return !all.iterator().hasNext();
   }
 
   private List<TimedMessage> sortAndFilterByInsertionDateAndDelayTime(Iterable<TimedMessage> all) {
     long now = new Date().getTime();
     List<TimedMessage> allAsList = StreamSupport
-        .stream(all.spliterator(), false).filter(m -> m.getTimeInMillisToEcho() >= now)
+        .stream(all.spliterator(), false).filter(m -> m.getTimeInMillisToEcho() <= now)
         .collect(Collectors.toList());
 
     Collections.sort(allAsList, compareTitles());
