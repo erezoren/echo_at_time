@@ -4,6 +4,9 @@ import com.eoren.echoattime.echoattime.Exception.AppServerException;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
 import com.eoren.echoattime.echoattime.server.AppServer;
 import com.eoren.echoattime.echoattime.server.MessageConverter;
+import com.eoren.echoattime.echoattime.server.SocketWrapper;
+import java.io.IOException;
+import java.net.ServerSocket;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +31,12 @@ public class AppConfig {
   }
 
   @Bean
-  public AppServer appServer(@Value("${app.server.port}") int appServerPort, RedisAccessor redisAccessor) throws AppServerException {
-    return new AppServer(appServerPort, redisAccessor, new MessageConverter());
+  public AppServer appServer(RedisAccessor redisAccessor, SocketWrapper socketWrapper) throws AppServerException {
+    return new AppServer(redisAccessor, socketWrapper);
+  }
+
+  @Bean
+  public SocketWrapper socketWrapper(@Value("${app.server.port}") int appServerPort) throws IOException, AppServerException {
+    return new SocketWrapper(new ServerSocket(appServerPort), new MessageConverter());
   }
 }

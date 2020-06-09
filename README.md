@@ -17,5 +17,20 @@ You can either run EchoAtTimeApplication.java from any java IDE
 Execute Maven clean package.</br>
 Inthe commandline cd to where the created jar is located</br>
 execute 
-<pre>java -jar <JAR_NAME></pre>
+<pre>java -jar target/echo_at_time-0.0.1-SNAPSHOT.jar</pre>
 
+
+## Connect to server
+It is advised to use NetCat to connect to the server
+<pre>nc 127.0.0.1 10101</pre>
+
+## Send messages
+The server excepts messages in the following format:
+
+<pre>message:some text;time:10000</pre>
+  
+*The stated time is in milliseconds
+
+## Output
+The server will scan redis periodically to fetch waiting messages and will 
+print them to the client. 

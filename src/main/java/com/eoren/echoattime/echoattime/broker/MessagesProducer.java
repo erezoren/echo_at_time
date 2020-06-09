@@ -21,6 +21,11 @@ public class MessagesProducer {
 Runs when server starts
  */
   @PostConstruct
+  private void printMissOuts(){
+    System.out.println("Printing Missed Messages");
+    checkForMessages();
+  }
+
   public void checkForMessages() {
     List<TimedMessage> allWaitingMessages = redisAccessor.getAllStuckMessages();
     allWaitingMessages.stream().forEach(m -> {

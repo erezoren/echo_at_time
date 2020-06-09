@@ -1,7 +1,7 @@
 package com.eoren.echoattime.echoattime.broker;
 
-import com.eoren.echoattime.echoattime.common.DateUtil;
 import com.eoren.echoattime.echoattime.redis.pojo.TimedMessage;
+import com.eoren.echoattime.echoattime.server.AppServer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,13 @@ public class MessagingBroker {
 
   private final MessagesConsumer messagesConsumer;
   private final MessagesProducer messagesProducer;
+  private final AppServer appServer;
 
-  public MessagingBroker(MessagesConsumer messagesConsumer, MessagesProducer messagesProducer) {
+  public MessagingBroker(MessagesConsumer messagesConsumer, MessagesProducer messagesProducer,
+      AppServer appServer) {
     this.messagesConsumer = messagesConsumer;
     this.messagesProducer = messagesProducer;
+    this.appServer = appServer;
   }
 
   /*
@@ -23,8 +26,8 @@ public class MessagingBroker {
   public void poll() {
     TimedMessage message = messagesConsumer.consume();
     if (message != null) {
-      System.out.println(
-          String.format("Message: \"%s\" Displayed on %s", message.getMessage(), DateUtil.formatDate(message.getTimeInMillisToEcho())));
+      appServer.out(message);
+
     }
   }
 

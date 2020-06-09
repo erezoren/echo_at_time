@@ -15,6 +15,6 @@ public class EchoAtTimeRunner implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    appServer.test();
+    appServer.serve();
   }
 }

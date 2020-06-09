@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.eoren.echoattime</groupId>
 	<artifactId>echo_at_time</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>echo_at_time</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -28,6 +28,13 @@
 			<artifactId>jedis</artifactId>
 			<version>3.1.0</version>
 			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 
 

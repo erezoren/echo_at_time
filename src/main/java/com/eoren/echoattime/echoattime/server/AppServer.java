@@ -1,89 +1,33 @@
 package com.eoren.echoattime.echoattime.server;
 
-import com.eoren.echoattime.echoattime.Exception.AppServerException;
-import com.eoren.echoattime.echoattime.common.DateUtil;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Date;
-import java.util.Scanner;
+import com.eoren.echoattime.echoattime.redis.pojo.TimedMessage;
 
 public class AppServer {
 
-  private ServerSocket serverSocket;
   private final RedisAccessor redisAccessor;
-  private final MessageConverter messageConverter;
+  private final SocketWrapper socketWrapper;
 
-  public AppServer(int port, RedisAccessor redisAccessor, MessageConverter messageConverter) throws AppServerException {
+  public AppServer(RedisAccessor redisAccessor, SocketWrapper socketWrapper) {
     this.redisAccessor = redisAccessor;
-    this.messageConverter = messageConverter;
-    tryConnect(port);
+    this.socketWrapper = socketWrapper;
   }
 
-  private void tryConnect(int port) throws AppServerException {
-    try {
-      this.serverSocket = new ServerSocket(port);
-    } catch (IOException e) {
-      throw new AppServerException(String.format("Could not connect to server due to: %s", e.getMessage()));
-    }
-  }
-
-  public void serve() throws IOException {
-    Socket clientSocket = serverSocket.accept();
-    InputStream inputToServer = clientSocket.getInputStream();
-    OutputStream outputFromServer = clientSocket.getOutputStream();
-    Scanner scanner = new Scanner(inputToServer, "UTF-8");
-
-    PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
-    serverPrintOut.println("Please enter a message and future time in seconds to print it");
-    serverPrintOut.println("Example: message:this is my message|time:15");
-    while (scanner.hasNextLine()) {
-      String line = scanner.nextLine();
-      serverPrintOut.println(line);
-      if (scanner.hasNextLine()) {
-        if (!validateInput(line)) {
-          serverPrintOut.println("Wrong cli format");
-        }
-      }
-    }
-  }
-
-  public void test() {
-    printInstructions();
-    Scanner scanner = new Scanner(System.in);
-    while (scanner.hasNextLine()) {
-      String line = scanner.nextLine();
-      if (!validateInput(line)) {
-        printValidationEerror();
-        printInstructions();
+  public synchronized void serve() {
+    socketWrapper.printInstructions();
+    while (socketWrapper.shouldWait()) {
+      TimedMessage timedMessage = socketWrapper.waitForRawMessages();
+      if (timedMessage == null) {
+        socketWrapper.printValidationEerror();
+        socketWrapper.printInstructions();
       } else {
-        System.out.println(String.format("Persisting message Redis on %s", DateUtil.formatDate(new Date().getTime())));
-        redisAccessor.insertNewTimesMessage(messageConverter.apply(line));
+        redisAccessor.insertNewTimesMessage(timedMessage);
       }
     }
   }
 
-  private void printValidationEerror() {
-    System.err.println("-----------------");
-    System.err.println("Wrong cli format");
-    System.err.println("-----------------");
-  }
-
-  private void printInstructions() {
-    System.out.println("Please enter a message and future time in seconds to print it");
-    System.out.println("Example: message:this is my message;time:15");
-    System.out.println("\n");
-  }
-
-  private boolean validateInput(String line) {
-    String lowered = line.toLowerCase();
-    return lowered.trim().contains("message:") && lowered.contains("time:") && line
-        .contains(";");
+  public void out(TimedMessage message) {
+    socketWrapper.out(message);
   }
 }
 
