@@ -15,6 +15,8 @@ import java.util.Scanner;
 
 public class SocketWrapper {
 
+  private static final String LINE = "**************************************************************";
+  private static final String TIMED_MESSAGE_HEADER = "~~<\uD83D\uDC9A>~~ TIMED MESSAGE ~~<\uD83D\uDC9A>~~";
   private Socket clientSocket;
   private InputStream inputToServer;
   private OutputStream outputFromServer;
@@ -53,7 +55,9 @@ public class SocketWrapper {
     if (!validateInput(line)) {
       return null;
     } else {
+      serverPrintOut.println(LINE);
       serverPrintOut.println(String.format("Persisting message Redis on %s", DateUtil.formatDate(new Date().getTime())));
+      serverPrintOut.println(LINE);
       return messageConverter.apply(line);
     }
   }
@@ -65,21 +69,23 @@ public class SocketWrapper {
   }
 
   public void out(TimedMessage message) {
+    serverPrintOut.println(TIMED_MESSAGE_HEADER);
     serverPrintOut.println(
-        String.format("Message: \"%s\" Displayed on %s", message.getMessage(), DateUtil.formatDate(message.getTimeInMillisToEcho())));
+        String.format("\033[1mMessage\033[0m: %s \033[1mDisplayed on\033[0m %s", message.getMessage(), DateUtil.formatDate(message.getTimeInMillisToEcho())));
+    serverPrintOut.println(TIMED_MESSAGE_HEADER);
   }
 
   public void printValidationEerror() {
-    serverPrintOut.println("-----------------");
-    serverPrintOut.println("Wrong cli format");
-    serverPrintOut.println("-----------------");
+    serverPrintOut.println("!-!-!-!-!-!-!-!-!-!");
+    serverPrintOut.println("WRONG CLI FORMAT");
+    serverPrintOut.println("!-!-!-!-!-!-!-!-!-!");
   }
 
   public void printInstructions() {
-    serverPrintOut.println("**************************************************************");
+    serverPrintOut.println(LINE);
     serverPrintOut.println("Please enter a message and future time in seconds to print it");
     serverPrintOut.println("Example: message:this is my message;time:15");
-    serverPrintOut.println("**************************************************************");
+    serverPrintOut.println(LINE);
     serverPrintOut.println("\n");
   }
 }

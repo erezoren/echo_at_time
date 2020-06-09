@@ -14,14 +14,15 @@ From the command line run ./redis.sh finish
 ## Server application
 You can either run EchoAtTimeApplication.java from any java IDE
 <p><b>OR</b></p>
-Execute Maven clean package.</br>
+Execute <b>Maven clean package</b>.</br>
 Inthe commandline cd to where the created jar is located</br>
 execute 
 <pre>java -jar target/echo_at_time-0.0.1-SNAPSHOT.jar</pre>
 
 
 ## Connect to server
-It is advised to use NetCat to connect to the server
+* Open a new terminal CLI<br>
+* It is advised to use NetCat to connect to the server
 <pre>nc 127.0.0.1 10101</pre>
 
 ## Send messages
