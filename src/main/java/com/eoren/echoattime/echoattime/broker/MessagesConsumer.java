@@ -18,12 +18,12 @@ public class MessagesConsumer {
     this.messagesQueue = messagesQueue;
   }
 
-  public void consume() {
+  public TimedMessage consume() {
     BlockingQueue<TimedMessage> blockingQueue = messagesQueue.getBlockingQueue();
     while (!blockingQueue.isEmpty()) {
-      TimedMessage timedMessage = blockingQueue.poll();
-      System.out.println(String.format("Message: %s  Displayed on %s", timedMessage.getMessage(), formatData(timedMessage)));
+      return blockingQueue.poll();
     }
+    return null;
   }
 
   private String formatData(TimedMessage timedMessage) {

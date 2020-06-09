@@ -3,6 +3,7 @@ package com.eoren.echoattime.echoattime.config;
 import com.eoren.echoattime.echoattime.Exception.AppServerException;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
 import com.eoren.echoattime.echoattime.server.AppServer;
+import com.eoren.echoattime.echoattime.server.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,6 @@ public class AppConfig {
 
   @Bean
   public AppServer appServer(@Value("${app.server.port}") int appServerPort, RedisAccessor redisAccessor) throws AppServerException {
-    return new AppServer(appServerPort, redisAccessor);
+    return new AppServer(appServerPort, redisAccessor, new MessageConverter());
   }
 }

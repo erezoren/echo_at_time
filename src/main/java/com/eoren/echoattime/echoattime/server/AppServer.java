@@ -1,6 +1,7 @@
 package com.eoren.echoattime.echoattime.server;
 
 import com.eoren.echoattime.echoattime.Exception.AppServerException;
+import com.eoren.echoattime.echoattime.common.DateUtil;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,15 +10,18 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Scanner;
 
 public class AppServer {
 
   private ServerSocket serverSocket;
   private final RedisAccessor redisAccessor;
+  private final MessageConverter messageConverter;
 
-  public AppServer(int port, RedisAccessor redisAccessor) throws AppServerException {
+  public AppServer(int port, RedisAccessor redisAccessor, MessageConverter messageConverter) throws AppServerException {
     this.redisAccessor = redisAccessor;
+    this.messageConverter = messageConverter;
     tryConnect(port);
   }
 
@@ -58,8 +62,8 @@ public class AppServer {
         printValidationEerror();
         printInstructions();
       } else {
-        System.out.println("Persisting message Redis");
-        redisAccessor.insertNewTimesMessage(new MessageConverter().apply(line));
+        System.out.println(String.format("Persisting message Redis on %s", DateUtil.formatDate(new Date().getTime())));
+        redisAccessor.insertNewTimesMessage(messageConverter.apply(line));
       }
     }
   }
