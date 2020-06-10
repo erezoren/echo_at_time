@@ -1,6 +1,7 @@
 package com.eoren.echoattime.echoattime.config;
 
 import com.eoren.echoattime.echoattime.Exception.AppServerException;
+import com.eoren.echoattime.echoattime.redis.KeyGenerator;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
 import com.eoren.echoattime.echoattime.server.AppServer;
 import com.eoren.echoattime.echoattime.server.MessageConverter;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import redis.clients.jedis.Jedis;
 
 @EnableScheduling
 @Configuration
@@ -31,12 +33,17 @@ public class AppConfig {
   }
 
   @Bean
-  public AppServer appServer(RedisAccessor redisAccessor, SocketWrapper socketWrapper) throws AppServerException {
+  public Jedis jedis() {
+    return new Jedis(jedisConnectionFactory().getHostName());
+  }
+
+  @Bean
+  public AppServer appServer(RedisAccessor redisAccessor, SocketWrapper socketWrapper) {
     return new AppServer(redisAccessor, socketWrapper);
   }
 
   @Bean
   public SocketWrapper socketWrapper(@Value("${app.server.port}") int appServerPort) throws IOException, AppServerException {
-    return new SocketWrapper(new ServerSocket(appServerPort), new MessageConverter());
+    return new SocketWrapper(new ServerSocket(appServerPort), new MessageConverter(new KeyGenerator()));
   }
 }

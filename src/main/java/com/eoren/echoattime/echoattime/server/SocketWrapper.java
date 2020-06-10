@@ -72,7 +72,6 @@ public class SocketWrapper {
     serverPrintOut.println(TIMED_MESSAGE_HEADER);
     serverPrintOut.println(
         String.format("\033[1mMessage\033[0m: %s \033[1mDisplayed on\033[0m %s", message.getMessage(), DateUtil.formatDate(message.getTimeInMillisToEcho())));
-    serverPrintOut.println(TIMED_MESSAGE_HEADER);
   }
 
   public void printValidationEerror() {

@@ -11,11 +11,19 @@ public class TimedMessage {
   private String message;
   private long timeInMillisToEcho;
 
-  public TimedMessage(String message, long timeInMillisToEcho) {
+  public TimedMessage(String id, String message, long timeInMillisToEcho) {
+    this.id = id;
     this.message = message;
     this.timeInMillisToEcho = timeInMillisToEcho;
   }
 
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public String getMessage() {
     return message;

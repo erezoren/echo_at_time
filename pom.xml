@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.eoren.echoattime</groupId>
 	<artifactId>echo_at_time</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>echo_at_time</name>
 	<description>Demo project for Spring Boot</description>
 

@@ -6,17 +6,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Component;
+import redis.clients.jedis.Jedis;
 
 @Component
 public class RedisAccessorImpl implements RedisAccessor {
 
+  private static final String OBEJCT_PREFIX = "TimesMessages:";
   private final TimedMessagesRepository timedMessagesRepository;
+  private final Jedis jedis;
 
-  public RedisAccessorImpl(TimedMessagesRepository timedMessagesRepository) {
+  public RedisAccessorImpl(TimedMessagesRepository timedMessagesRepository, Jedis jedis) {
     this.timedMessagesRepository = timedMessagesRepository;
+    this.jedis = jedis;
   }
 
   @Override
@@ -39,7 +45,20 @@ public class RedisAccessorImpl implements RedisAccessor {
   }
 
   /*
-  Iterable has a size even when it is empty
+  This is an optimization that uses Redis KEYS by pattern feature in order to fetch only messages to be displayed today
+   */
+  @Override
+  public List<TimedMessage> getAllMessageByDatePattern(String datePattern) {
+    Set<String> todaysKeys = jedis.keys(datePattern);
+    List<TimedMessage> all = todaysKeys.stream().map(key -> key.replace(OBEJCT_PREFIX, ""))
+        .map(key -> timedMessagesRepository.findById(key)).filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+    return sortAndFilterByInsertionDateAndDelayTime(all);
+  }
+
+  /*
+  Iterable has a size of 1 even when it is empty
    */
   private boolean isEmpty(Iterable<TimedMessage> all) {
     return !all.iterator().hasNext();
@@ -51,11 +70,11 @@ public class RedisAccessorImpl implements RedisAccessor {
         .stream(all.spliterator(), false).filter(m -> m.getTimeInMillisToEcho() <= now)
         .collect(Collectors.toList());
 
-    Collections.sort(allAsList, compareTitles());
+    Collections.sort(allAsList, timeOfDisplayComparator());
     return allAsList;
   }
 
-  private Comparator<TimedMessage> compareTitles() {
+  private Comparator<TimedMessage> timeOfDisplayComparator() {
     return Comparator.comparing(TimedMessage::getTimeInMillisToEcho);
   }
 }

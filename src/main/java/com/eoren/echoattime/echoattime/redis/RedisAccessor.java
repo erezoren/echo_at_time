@@ -10,4 +10,6 @@ public interface RedisAccessor {
   List<TimedMessage> getAllStuckMessages();
 
   void deleteTimesMessage(TimedMessage timedMessage);
+
+  List<TimedMessage> getAllMessageByDatePattern(String datePattern);
 }
