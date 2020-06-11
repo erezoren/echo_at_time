@@ -83,7 +83,7 @@ public class SocketWrapper {
   public void printInstructions() {
     serverPrintOut.println(LINE);
     serverPrintOut.println("Please enter a message and future time in milliseconds to print it");
-    serverPrintOut.println("\033[1mExample\033[0m: message:this is my message;time:15");
+    serverPrintOut.println("\033[1mExample\033[0m: message:this is my message;time:10000");
     serverPrintOut.println(LINE);
     serverPrintOut.println("\n");
   }
