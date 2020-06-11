@@ -32,8 +32,6 @@ The server excepts messages in the following format:
 
 <pre>message:some text;time:10000</pre>
 
-  
-*The stated time is in milliseconds
 
 
 | Parameter        | Explanation | Limitation  
