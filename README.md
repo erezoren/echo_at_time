@@ -31,8 +31,16 @@ execute
 The server excepts messages in the following format:
 
 <pre>message:some text;time:10000</pre>
+
   
 *The stated time is in milliseconds
+
+
+| Parameter        | Explanation | Limitation  
+| ------------- |:-------------:| :-------------:
+| message      | Any textual message to store and display | 512 Megabytes in length
+| time     | the delay (from time of sending) in milliseconds to display the message       | N/A
+
 
 ## Output
 The server will scan redis periodically to fetch waiting messages and will 

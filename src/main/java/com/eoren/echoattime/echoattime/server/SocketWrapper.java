@@ -3,7 +3,6 @@ package com.eoren.echoattime.echoattime.server;
 import com.eoren.echoattime.echoattime.Exception.AppServerException;
 import com.eoren.echoattime.echoattime.common.DateUtil;
 import com.eoren.echoattime.echoattime.redis.pojo.TimedMessage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -30,15 +29,15 @@ public class SocketWrapper {
     tryConnect(serverSocket);
   }
 
-  private synchronized void tryConnect(ServerSocket serverSocket) throws AppServerException {
+  private void tryConnect(ServerSocket serverSocket) throws AppServerException {
     try {
       clientSocket = serverSocket.accept();
       inputToServer = clientSocket.getInputStream();
       outputFromServer = clientSocket.getOutputStream();
       scanner = new Scanner(inputToServer, "UTF-8");
       serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
-    } catch (IOException e) {
-      throw new AppServerException(String.format("Could not connect to server due to: %s", e.getMessage()));
+    } catch (Exception e) {
+      throw new AppServerException(String.format("Could not establish connection to server due to: %s", e.getMessage()));
     }
   }
 
@@ -46,7 +45,7 @@ public class SocketWrapper {
     return scanner.hasNextLine();
   }
 
-  public TimedMessage waitForRawMessages() {
+  public synchronized TimedMessage waitForRawMessages() {
     String line = scanner.nextLine();
     return handleRawMessage(line);
   }
@@ -71,7 +70,8 @@ public class SocketWrapper {
   public void out(TimedMessage message) {
     serverPrintOut.println(TIMED_MESSAGE_HEADER);
     serverPrintOut.println(
-        String.format("\033[1mMessage\033[0m: %s \033[1mDisplayed on\033[0m %s", message.getMessage(), DateUtil.formatDate(message.getTimeInMillisToEcho())));
+        String.format("\033[1mMessage\033[0m: %s \033[1mDisplayed on\033[0m %s", message.getMessage(),
+            DateUtil.formatDate(message.getTimeInMillisToEcho())));
   }
 
   public void printValidationEerror() {
