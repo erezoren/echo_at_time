@@ -17,7 +17,7 @@ From the command line run ./redis.sh finish
 You can either run EchoAtTimeApplication.java from any java IDE
 <p><b>OR</b></p>
 Execute <b>Maven clean package</b>.</br>
-Inthe commandline cd to where the created jar is located</br>
+In the commandline cd to where the created jar is located</br>
 execute 
 <pre>java -jar target/echo_at_time-0.0.1-SNAPSHOT.jar</pre>
 
