@@ -18,7 +18,7 @@ public class AppServer {
     while (socketWrapper.shouldWait()) {
       TimedMessage timedMessage = socketWrapper.waitForRawMessages();
       if (timedMessage == null) {
-        socketWrapper.printValidationEerror();
+        socketWrapper.printValidationError();
         socketWrapper.printInstructions();
       } else {
         redisAccessor.insertNewTimesMessage(timedMessage);

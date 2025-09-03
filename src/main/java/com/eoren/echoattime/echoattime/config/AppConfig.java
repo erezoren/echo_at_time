@@ -1,6 +1,6 @@
 package com.eoren.echoattime.echoattime.config;
 
-import com.eoren.echoattime.echoattime.Exception.AppServerException;
+import com.eoren.echoattime.echoattime.exception.AppServerException;
 import com.eoren.echoattime.echoattime.redis.KeyGenerator;
 import com.eoren.echoattime.echoattime.redis.RedisAccessor;
 import com.eoren.echoattime.echoattime.server.AppServer;
@@ -43,7 +43,7 @@ public class AppConfig {
   }
 
   @Bean
-  public SocketWrapper socketWrapper(@Value("${app.server.port}") int appServerPort) throws IOException, AppServerException {
+  public SocketWrapper socketWrapper(@Value("${app.server.port}") int appServerPort) throws IOException {
     return new SocketWrapper(new ServerSocket(appServerPort), new MessageConverter(new KeyGenerator()));
   }
 }
