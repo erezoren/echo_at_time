@@ -1,6 +1,6 @@
 package com.eoren.echoattime.echoattime.server;
 
-import com.eoren.echoattime.echoattime.Exception.AppServerException;
+import com.eoren.echoattime.echoattime.exception.AppServerException;
 import com.eoren.echoattime.echoattime.common.DateUtil;
 import com.eoren.echoattime.echoattime.redis.pojo.TimedMessage;
 import java.io.InputStream;
@@ -24,12 +24,12 @@ public class SocketWrapper {
   private final MessageConverter messageConverter;
 
   public SocketWrapper(ServerSocket serverSocket,
-      MessageConverter messageConverter) throws AppServerException {
+      MessageConverter messageConverter) {
     this.messageConverter = messageConverter;
     tryConnect(serverSocket);
   }
 
-  private void tryConnect(ServerSocket serverSocket) throws AppServerException {
+  private void tryConnect(ServerSocket serverSocket) {
     try {
       clientSocket = serverSocket.accept();
       inputToServer = clientSocket.getInputStream();
@@ -37,7 +37,7 @@ public class SocketWrapper {
       scanner = new Scanner(inputToServer, "UTF-8");
       serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
     } catch (Exception e) {
-      throw new AppServerException(String.format("Could not establish connection to server due to: %s", e.getMessage()));
+      throw new AppServerException("Could not establish connection to server", e);
     }
   }
 
@@ -74,7 +74,7 @@ public class SocketWrapper {
             DateUtil.formatDate(message.getTimeInMillisToEcho())));
   }
 
-  public void printValidationEerror() {
+  public void printValidationError() {
     serverPrintOut.println("!-!-!-!-!-!-!-!-!-!");
     serverPrintOut.println("WRONG CLI FORMAT");
     serverPrintOut.println("!-!-!-!-!-!-!-!-!-!");

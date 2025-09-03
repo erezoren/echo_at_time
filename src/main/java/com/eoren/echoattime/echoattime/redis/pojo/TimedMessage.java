@@ -11,6 +11,10 @@ public class TimedMessage {
   private String message;
   private long timeInMillisToEcho;
 
+  // Default constructor for Spring Data Redis
+  public TimedMessage() {
+  }
+
   public TimedMessage(String id, String message, long timeInMillisToEcho) {
     this.id = id;
     this.message = message;
@@ -39,5 +43,14 @@ public class TimedMessage {
 
   public void setTimeInMillisToEcho(long timeInMillisToEcho) {
     this.timeInMillisToEcho = timeInMillisToEcho;
+  }
+
+  @Override
+  public String toString() {
+    return "TimedMessage{" +
+        "id='" + id + '\'' +
+        ", message='" + message + '\'' +
+        ", timeInMillisToEcho=" + timeInMillisToEcho +
+        '}';
   }
 }

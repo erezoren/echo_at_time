@@ -1,45 +1,98 @@
-╰☆⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️☆╮
 # echo_at_time
-╰☆⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️☆╮
 
-## Redis
-To init redis you can either install it locally and run.
-<p><b>OR</b></p> Start the redis docker image as follows:</br>
-<pre>
-From the command line run ./redis.sh start
-</pre>
-To stop it  and remove the container run
-<pre>
-From the command line run ./redis.sh finish
-</pre>
+A Spring Boot application that accepts messages with time delays and echoes them back after the specified time using Redis for persistence.
 
-## Server application
-You can either run EchoAtTimeApplication.java from any java IDE
-<p><b>OR</b></p>
-Execute <b>Maven clean package</b>.</br>
-In the commandline cd to where the created jar is located</br>
-execute 
-<pre>java -jar target/echo_at_time-0.0.1-SNAPSHOT.jar</pre>
+## Features
 
+- TCP server accepting connections on port 10101
+- Message scheduling with Redis persistence
+- Input validation and error handling
+- Configurable delay periods (up to 24 hours)
 
-## Connect to server
-* Open a new terminal CLI<br>
-* It is advised to use NetCat to connect to the server
-<pre>nc 127.0.0.1 10101</pre>
+## Prerequisites
 
-## Send messages
-The server excepts messages in the following format:
+- Java 8 or higher
+- Redis server
+- Maven 3.x
 
-<pre>message:some text;time:10000</pre>
+## Redis Setup
 
+### Option 1: Local Installation
+Install Redis locally and run with default configuration.
 
+### Option 2: Docker (Recommended)
+Start Redis using the provided script:
+```bash
+./redis.sh start
+```
 
-| Parameter        | Explanation | Limitation  
-| ------------- |:-------------:| :-------------:
-| message      | Any textual message to store and display | 512 Megabytes in length
-| time     | the delay (from time of sending) in milliseconds to display the message       | N/A
+To stop and clean up:
+```bash
+./redis.sh finish
+```
 
+## Building and Running
+
+### Option 1: IDE
+Run `EchoAtTimeApplication.java` from your IDE.
+
+### Option 2: Maven
+```bash
+mvn clean package
+java -jar target/echo_at_time-0.0.5-SNAPSHOT.jar
+```
+
+## Usage
+
+### Connect to Server
+Use netcat to connect to the server:
+```bash
+nc 127.0.0.1 10101
+```
+
+### Send Messages
+The server accepts messages in the following format:
+```
+message:your text here;time:delay_in_milliseconds
+```
+
+**Examples:**
+```
+message:Hello World;time:5000
+message:Reminder to check email;time:60000
+```
+
+### Message Format
+
+| Parameter | Description | Limitations |
+|-----------|-------------|-------------|
+| message | Text content to echo back | 1-1000 characters |
+| time | Delay in milliseconds before echoing | 0-86400000 (24 hours) |
 
 ## Output
-The server will scan redis periodically to fetch waiting messages and will 
-print them to the client. 
+
+The server will:
+1. Acknowledge receipt of valid messages
+2. Store them in Redis with the calculated echo time
+3. Display messages back to the client when their time arrives
+
+## Architecture
+
+- **Spring Boot 2.3.0** - Application framework
+- **Redis** - Message persistence and scheduling
+- **TCP Sockets** - Client communication
+- **Scheduled polling** - Message delivery (100ms intervals)
+
+## Testing
+
+Run the test suite:
+```bash
+mvn test
+```
+
+## Known Limitations
+
+- Single client connection at a time
+- No authentication or authorization
+- No SSL/TLS encryption
+- Limited error handling for network issues

@@ -16,7 +16,7 @@ import redis.clients.jedis.Jedis;
 @Component
 public class RedisAccessorImpl implements RedisAccessor {
 
-  private static final String OBEJCT_PREFIX = "TimesMessages:";
+  private static final String OBJECT_PREFIX = "TimesMessages:";
   private final TimedMessagesRepository timedMessagesRepository;
   private final Jedis jedis;
 
@@ -39,7 +39,7 @@ public class RedisAccessorImpl implements RedisAccessor {
   public List<TimedMessage> getAllStuckMessages() {
     Iterable<TimedMessage> all = timedMessagesRepository.findAll();
     if (isEmpty(all)) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
     return sortAndFilterByInsertionDateAndDelayTime(all);
   }
@@ -50,7 +50,7 @@ public class RedisAccessorImpl implements RedisAccessor {
   @Override
   public List<TimedMessage> getAllMessageByDatePattern(String datePattern) {
     Set<String> todaysKeys = jedis.keys(datePattern);
-    List<TimedMessage> all = todaysKeys.stream().map(key -> key.replace(OBEJCT_PREFIX, ""))
+    List<TimedMessage> all = todaysKeys.stream().map(key -> key.replace(OBJECT_PREFIX, ""))
         .map(key -> timedMessagesRepository.findById(key)).filter(Optional::isPresent)
         .map(Optional::get)
         .collect(Collectors.toList());

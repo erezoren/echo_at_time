@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class MessagesConsumer {
 
   private final MessagesQueue messagesQueue;
-  private final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+  private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
   public MessagesConsumer(MessagesQueue messagesQueue) {

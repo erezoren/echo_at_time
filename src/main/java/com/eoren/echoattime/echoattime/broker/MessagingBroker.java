@@ -20,18 +20,20 @@ public class MessagingBroker {
   }
 
   /*
-  Waits one milli after last execution
+   * Polls for messages every 100ms instead of 1ms to reduce CPU usage
    */
-  @Scheduled(fixedDelay = 1)
+  @Scheduled(fixedDelay = 100)
   public void poll() {
     TimedMessage message = messagesConsumer.consume();
     if (message != null) {
       appServer.out(message);
-
     }
   }
 
-  @Scheduled(fixedDelay = 1)
+  /*
+   * Checks for new messages every 100ms instead of 1ms to reduce CPU usage
+   */
+  @Scheduled(fixedDelay = 100)
   public void push() {
     messagesProducer.checkForMessages();
   }
